@@ -1,25 +1,11 @@
 document.addEventListener("loaded", function (event) {
   // Select the node that will be observed for mutations
-  const target_queue = document.querySelector("pugchamp-launchpad > #roles");
   const target_draft = document.querySelector("#playerPool");
 
   // Options for the observer (which mutations to observe)
   const config = { attributes: true, childList: true, subtree: true };
 
   // Callback function to execute when mutations are observed
-  const callback_queue = function (mutationsList, observer) {
-    // Use traditional 'for loops' for IE 11
-    for (const mutation of mutationsList) {
-      if (mutation.type === "childList") {
-        if(mutation.addedNodes[1]) {
-          const added_node = mutation.addedNodes[1].querySelector("div.flex.style-scope.pugchamp-launchpad > a");
-          const steamID64 = added_node.getAttribute("href").split("/player/")[1];
-          
-          createEloElement(added_node, steamID64);
-        }
-      }
-    }
-  };
   const callback_draft = function (mutationsList, observer) {
     for (const mutation of mutationsList) {
       if (mutation.type === "childList") {
@@ -34,19 +20,12 @@ document.addEventListener("loaded", function (event) {
   };
 
   // Create an observer instance linked to the callback function
-  const observer_queue = new MutationObserver(callback_queue);
   const observer_draft = new MutationObserver(callback_draft);
 
   // Start observing the target node for configured mutations
-  observer_queue.observe(target_queue, config);
   observer_draft.observe(target_draft, config);
 
   // initial page load
-  const node_list_queue = document.querySelectorAll("div.flex.style-scope.pugchamp-launchpad > a");
-  node_list_queue.forEach(node => {
-    const steamID64 = node.getAttribute("href").split("/player/")[1];
-    createEloElement(node, steamID64);
-  });
   const node_list_draft = document.querySelectorAll("div.flex.style-scope.pugchamp-draft > a");
   node_list_draft.forEach(node => {
     const steamID64 = node.getAttribute("href").split("/player/")[1];
@@ -85,6 +64,7 @@ async function createEloElement(node, steamID64) {
       position: relative;
     `;
 
+  new_div.classList.add("pug-stats-elem")
   new_div.appendChild(new_content);
   node.parentNode.parentNode.insertBefore(new_div, node.parentNode.parentNode.firstChild);
 }
