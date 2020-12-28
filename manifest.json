@@ -1,16 +1,22 @@
 {
   "name": "pug-stats-extension",
-  "version": "0.1",
+  "version": "0.2",
   "manifest_version": 2,
+  "permissions": [
+    "storage"
+  ],
+  "icons": { 
+    "16": "icon16.png",
+    "48": "icon48.png",
+   "128": "icon128.png" 
+  },
   "content_scripts": [
     {
       "matches": ["https://eu.pug.champ.gg/"],
-      "js": ["content.js"],
-      "icons": { 
-        "16": "icon16.png",
-        "48": "icon48.png",
-       "128": "icon128.png" 
-      }
+      "js": ["content.js"]
     }
-  ]
+  ],
+  "browser_action": {
+    "default_popup": "popup.html"
+  }
 }

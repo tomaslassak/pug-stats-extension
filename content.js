@@ -34,18 +34,19 @@ document.addEventListener("loaded", function (event) {
 });
 
 async function createEloElement(node, steamID64) {
-  const response = await fetch(`https://pugstats.herokuapp.com/api/players/${steamID64}`);
-  const player = await response.json();
+  try {
+    const response = await fetch(`https://pugstats.herokuapp.com/api/players/${steamID64}`);
+    const player = await response.json();
 
-  const new_div = document.createElement("div");
-  
-  let elo = 1600;
-  if (player) elo = player.elo;
-  
-  const new_content = document.createTextNode(Math.round(elo));
-  const new_hue = Math.round(getHue(elo));
+    const new_div = document.createElement("div");
 
-  new_div.style = `
+    let elo = 1600;
+    if (player) elo = player.elo;
+
+    const new_content = document.createTextNode(Math.round(elo));
+    const new_hue = Math.round(getHue(elo));
+
+    new_div.style = `
       background-color: hsl(${new_hue}, 100%, 70%);
       text-decoration: none;
       color: white;
@@ -64,9 +65,23 @@ async function createEloElement(node, steamID64) {
       position: relative;
     `;
 
-  new_div.classList.add("pug-stats-elem")
-  new_div.appendChild(new_content);
-  node.parentNode.parentNode.insertBefore(new_div, node.parentNode.parentNode.firstChild);
+    new_div.classList.add("pug-stats-elem")
+    new_div.appendChild(new_content);
+
+    node.parentNode.parentNode.querySelector("#contentIcon").insertBefore(new_div,
+      node.parentNode.parentNode.querySelector("#contentIcon").firstChild);
+
+    chrome.storage.local.get(["space_for_div_helper"], function (data) {
+      if (data.space_for_div_helper) {
+        node.parentNode.parentNode.querySelector("#contentIcon")
+          .style = `min-width: ${data.space_for_div_helper}px;`;
+      }
+    });
+  }
+
+  catch (error) {
+    console.log(error);
+  }
 }
 
 function getHue(elo) {
